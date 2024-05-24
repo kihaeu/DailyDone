@@ -1,6 +1,7 @@
 package com.example.todolist.ui.view
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.todolist.ui.theme.ToDoListTheme
 
@@ -41,6 +43,10 @@ class AdditionPage : ComponentActivity() {
 fun AdditionPageContent(onSaveClick: (String, String) -> Unit, onCancelClick: () -> Unit) {
     var task by remember { mutableStateOf("") }
     var selectedPriority by remember { mutableStateOf("상") }
+    var year by remember { mutableStateOf("2024") }
+    var month by remember { mutableStateOf("5") }
+    var day by remember { mutableStateOf("24") }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -65,16 +71,46 @@ fun AdditionPageContent(onSaveClick: (String, String) -> Unit, onCancelClick: ()
             label = { Text("할 일 작성") },
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(20.dp))
+            TextField(value = year, onValueChange = { year = it }, modifier = Modifier.weight(1.8f))
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = "년", modifier = Modifier.weight(1f))
+            TextField(
+                value = month,
+                onValueChange = { month = it },
+                modifier = Modifier.weight(1.3f)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = "월", modifier = Modifier.weight(1f))
+            TextField(value = day, onValueChange = { day = it }, modifier = Modifier.weight(1.3f))
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = "일", modifier = Modifier.weight(1f))
+        }
+        Spacer(modifier = Modifier.height(140.dp))
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Button(onClick = { onSaveClick(selectedPriority, task) }) {
+            Button(
+                onClick = {
+                    if (task != "")
+                        onSaveClick(selectedPriority, task)
+                    else
+                        Toast.makeText(context, "할 일을 입력해주세요", Toast.LENGTH_SHORT).show()
+                }
+            ) {
                 Text("저장")
             }
-            Button(onClick = onCancelClick, colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
-            )) {
+            Button(
+                onClick = onCancelClick, colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
                 Text("취소")
             }
         }
